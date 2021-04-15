@@ -1,0 +1,1 @@
+module "github.com/ArtemBond13/ago2_auth"
