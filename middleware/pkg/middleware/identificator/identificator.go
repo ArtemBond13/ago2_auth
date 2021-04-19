@@ -19,12 +19,12 @@ func (c *contextKey) String() string {
 	return c.name
 }
 
-func Identificator(handler http.Handler) http.Handler  {
-	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request){
+func Identificator(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		parts := strings.Split(request.RemoteAddr, ":")
 		if len(parts) == 2 {
 			// Создаём новый контекст со значением
-			ctx := context.WithValue(request.Context(), identifierContextKey,&parts[0])
+			ctx := context.WithValue(request.Context(), identifierContextKey, &parts[0])
 			// Создаём новый запрос с «заменённым» контекстом:
 			request = request.WithContext(ctx)
 		}
@@ -33,7 +33,7 @@ func Identificator(handler http.Handler) http.Handler  {
 	})
 }
 
-func Identifier(ctx context.Context) (*string, error){
+func Identifier(ctx context.Context) (*string, error) {
 	value, ok := ctx.Value(identifierContextKey).(*string)
 	if !ok {
 		return nil, ErrNoIdentifier

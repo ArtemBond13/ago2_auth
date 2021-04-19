@@ -2,10 +2,11 @@ package identificator
 
 import (
 	"bytes"
-	"github.com/go-chi/chi"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/go-chi/chi"
 )
 
 func TestIdentificatorHTTPMux(t *testing.T) {
