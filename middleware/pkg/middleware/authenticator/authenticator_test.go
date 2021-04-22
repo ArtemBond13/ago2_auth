@@ -78,7 +78,7 @@ func TestAuthenticatorHTTPMux(t *testing.T) {
 	type args struct {
 		method string
 		path   string
-		addr string
+		addr   string
 	}
 
 	tests := []struct {
@@ -120,7 +120,7 @@ func TestAuthenticatorChi(t *testing.T) {
 		func(writer http.ResponseWriter, request *http.Request) {
 			profile, err := Authentication(request.Context())
 			if err != nil {
-				if err != nil {
+				if err == ErrNoAuthentication {
 					writer.WriteHeader(http.StatusUnauthorized)
 					return
 				}
@@ -143,19 +143,18 @@ func TestAuthenticatorChi(t *testing.T) {
 	type args struct {
 		method string
 		path   string
-		addr string
+		addr   string
 	}
 
 	tests := []struct {
-		name string
-		args args
-		want []byte
+		name     string
+		args     args
+		want     []byte
 		wantCode int
 	}{
-		{name: "GET", args: args{method: "GET", path: "/get"}, want: []byte("USERAUTH"), wantCode: http.StatusOK},
+		{name: "GET", args: args{method: "GET", path: "/get", addr: "191.0.2.1"}, want: []byte("USERAUTH"), wantCode: http.StatusOK},
 		// TODO: write for other methods
-		{name: "No auth", args: args{method: "GET", path: "/get", addr: "191.0.2.1"}, want: []byte{}, wantCode: http.StatusUnauthorized},
-
+		{name: "No auth", args: args{method: "GET", path: "/get", addr: "191.0.0.1"}, want: []byte{}, wantCode: http.StatusUnauthorized},
 	}
 
 	for _, tt := range tests {
@@ -165,11 +164,11 @@ func TestAuthenticatorChi(t *testing.T) {
 		router.ServeHTTP(response, request)
 		got := response.Body.Bytes()
 		if !bytes.Equal(tt.want, got) {
-			t.Errorf("got %s, want %s", got, tt.want)
+			t.Errorf("%s, got %s, want %s", tt.name, got, tt.want)
 		}
 		gotCode := response.Code
-		if tt.wantCode != gotCode{
-			t.Errorf("got %d, want %d", gotCode, tt.wantCode)
+		if tt.wantCode != gotCode {
+			t.Errorf("%s, got %d, want %d", tt.name, gotCode, tt.wantCode)
 		}
 	}
 }
