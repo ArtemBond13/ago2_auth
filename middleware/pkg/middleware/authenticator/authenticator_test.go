@@ -152,9 +152,10 @@ func TestAuthenticatorChi(t *testing.T) {
 		want     []byte
 		wantCode int
 	}{
-		{name: "GET", args: args{method: "GET", path: "/get", addr: "191.0.2.1"}, want: []byte("USERAUTH"), wantCode: http.StatusOK},
+		{name: "GET", args: args{method: "GET", path: "/get", addr: "192.0.2.1"}, want: []byte("USERAUTH"), wantCode: http.StatusOK},
 		// TODO: write for other methods
 		{name: "No auth", args: args{method: "GET", path: "/get", addr: "191.0.0.1"}, want: []byte{}, wantCode: http.StatusUnauthorized},
+		{name: "No found page", args: args{method: "POST", path: "/post", addr: "192.0.0.1"}, want: []byte("404 page not found\n"), wantCode: 404},
 	}
 
 	for _, tt := range tests {
